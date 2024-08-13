@@ -1,4 +1,5 @@
-Aplicacion desafio rick y morty
+Aplicacion desafio rick y morty:  
+
 El proyecto de aplicacion en react native esta basado en la serie Rick and Morty y su funcionalidad se basa en visualizar y buscar personajes, visualizar su detalle y episodios, visualizar detalles del episodio y personajes que aparecieron, tiene funcionalidad de administrar favoritos, busqueda por nombre y filtro de estado y especie.
 Para mas informacion sobre la API utilizada : (https://rickandmortyapi.com/documentation)
 
