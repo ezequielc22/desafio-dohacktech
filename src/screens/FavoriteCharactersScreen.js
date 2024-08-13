@@ -45,7 +45,7 @@ const FavoriteCharactersScreen = () => {
       <CharacterList characters={favoriteCharacters} />
     ) : (
       <EmptyState 
-        message="Ups, parece que aún no tienes favoritos" 
+        message="Oops, it looks like you don't have any favorites yet." 
         iconName="sentiment-dissatisfied"
       />
     );

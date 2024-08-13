@@ -3,11 +3,11 @@ import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const EpisodePill = memo(({ item }) => {
-    const navigation = useNavigation();
-
-    const handleEpisodePress = (episodeId) => {
-    navigation.navigate('EpisodeDetail', { episodeId });
-    };
+  const navigation = useNavigation();
+  // Navega hacia el detalle del episodio seleccionado
+  const handleEpisodePress = (episodeId) => {
+  navigation.navigate('EpisodeDetail', { episodeId });
+  };
   return (
     <TouchableOpacity style={styles.episodePill} onPress={() => handleEpisodePress(item)}>
       <Text style={styles.episodeText}>{item}</Text>

@@ -3,6 +3,7 @@ import { View, Text, FlatList, StyleSheet } from 'react-native';
 import EpisodePill from '../EpisodePill';
 
 const EpisodeList = React.memo(({ episodes }) => {
+  // Renderiza las pill con el numero de episodios
   const renderEpisodeItem = ({ item }) => (
     <EpisodePill item={item} />
   );
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
   footer: {
     position: 'absolute',
     bottom: 0,
-    right: 20,
+    width: '100%',
     zIndex: 1,
     padding: 10,
     borderTopWidth: 1,

@@ -6,6 +6,8 @@ const TypewriterText = ({ testID, text, duration = 100, style }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [textAnim] = useState(new Animated.Value(0));
 
+  // Configura el intervalo de tiempo para mostrar caracter por caracter
+
   useEffect(() => {
     let currentIndex = 0;
     const interval = setInterval(() => {
@@ -19,6 +21,8 @@ const TypewriterText = ({ testID, text, duration = 100, style }) => {
 
     return () => clearInterval(interval);
   }, [text, duration]);
+
+  // Configura la animacion del texto
 
   useEffect(() => {
     Animated.timing(textAnim, {

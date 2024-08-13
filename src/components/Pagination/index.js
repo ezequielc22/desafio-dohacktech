@@ -10,11 +10,10 @@ const Pagination = ({
   handleInputChange,
   goToPage,
   editingPage,
-  errorState,
-  errorStateVisible,
   shakeAnimation,
 }) => {
   const renderPagination = () => {
+    // Configura el rango de paginas que se muestra en el medio del paginador
     const range = 3;
     let startPage = Math.max(1, page - Math.floor(range / 2));
     let endPage = Math.min(totalPages, page + Math.floor(range / 2));

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import TypewriterText from '../TyperwriterText';
 
 const EpisodeDetail = ({ episode, characters }) => {
+    // Devuelve null si no hay episodios
   if(!episode || !characters){
     return null;
   }

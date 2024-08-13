@@ -12,6 +12,8 @@ const SearchBar = React.memo(({ searchQuery, onSearchChange, onFiltersChange }) 
   const opacity = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation();
 
+  // Configura las opciones del picker
+
   useEffect(() => {
     const loadFilterOptions = async () => {
       const options = await getFilterOptions();
@@ -20,19 +22,27 @@ const SearchBar = React.memo(({ searchQuery, onSearchChange, onFiltersChange }) 
     loadFilterOptions();
   }, []);
 
+  // Navega hacia la pantalla de favoritos
+
   const navigateToFavorites = useCallback(() => {
     navigation.navigate('Favorites');
   }, [navigation]);
+
+  // Aplica los filtros
 
   const applyFilters = useCallback(() => {
     onFiltersChange({ ...filters });
     toggleModal();
   }, [filters, onFiltersChange]);
 
+  // Limpia los filtros aplicados
+
   const clearFilters = useCallback(() => {
     setFilters({ species: '', status: '' });
     onFiltersChange({ species: '', status: '' });
   }, [onFiltersChange]);
+
+  // configura la animacion de visibilidad del modal de filtros
 
   const toggleModal = useCallback(() => {
     if (modalVisible) {
@@ -56,7 +66,7 @@ const SearchBar = React.memo(({ searchQuery, onSearchChange, onFiltersChange }) 
   };
 
   const handleBackdropPress = () => {
-      toggleModal();
+    toggleModal();
   };
 
   return (

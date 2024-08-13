@@ -6,7 +6,7 @@ import * as Haptics from 'expo-haptics';
 import useDebounce from '../hooks/useDebounce';
 import CharacterList from '../components/CharacterList';
 
-// Lazy load components for better performance
+// Lazy loads
 const Pagination = lazy(() => import('../components/Pagination'));
 const SearchBar = lazy(() => import('../components/SearchBar'));
 
@@ -183,7 +183,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F0F2EB', // Background color
+    backgroundColor: '#F0F2EB',
   },
 });
 

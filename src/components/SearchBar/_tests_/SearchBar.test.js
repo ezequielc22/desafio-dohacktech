@@ -10,6 +10,7 @@ const renderWithNavigation = (component) => {
         </NavigationContainer>
     );
 };
+jest.useFakeTimers()
 describe('SearchBar', () => {
     let onSearchChange, onFiltersChange;
 

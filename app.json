@@ -3,9 +3,7 @@
     "name": "desafio-dohacktech",
     "slug": "desafio-dohacktech",
     "version": "1.0.0",
-    "sdkVersion": "51.0.25",
     "orientation": "portrait",
-    "platforms": ["ios", "android"],
     "icon": "./src/assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
