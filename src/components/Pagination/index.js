@@ -15,7 +15,7 @@ const Pagination = ({
   shakeAnimation,
 }) => {
   const renderPagination = () => {
-    const range = 3; // Number of visible pages
+    const range = 3;
     let startPage = Math.max(1, page - Math.floor(range / 2));
     let endPage = Math.min(totalPages, page + Math.floor(range / 2));
 
@@ -32,7 +32,7 @@ const Pagination = ({
         )}
         {startPage > 1 && (
           <>
-            <TouchableOpacity onPress={() => handlePageChange(1)} style={styles.pageButton}>
+            <TouchableOpacity testID='start-page' onPress={() => handlePageChange(1)} style={styles.pageButton}>
               <Text style={styles.pageButtonText}>1</Text>
             </TouchableOpacity>
             {startPage > 2 && <Text style={styles.pageButtonText}>...</Text>}
@@ -42,15 +42,13 @@ const Pagination = ({
           <View key={p} style={styles.buttonWrapper}>
             <TouchableOpacity
               onPress={() => handlePageEdit(p)}
-              style={[
-                styles.pageButton,
-                errorState && errorStateVisible && editingPage === p && styles.errorButton,
-              ]}
+              style={styles.pageButton}
             >
               {editingPage === p ? (
                 <TextInput
                   keyboardType="numeric"
                   value={inputPage}
+                  testID={inputPage}
                   onChangeText={handleInputChange}
                   onSubmitEditing={goToPage}
                   autoFocus
@@ -64,7 +62,7 @@ const Pagination = ({
         {endPage < totalPages && (
           <>
             {endPage < totalPages - 1 && <Text style={styles.pageButtonText}>...</Text>}
-            <TouchableOpacity onPress={() => handlePageChange(totalPages)} style={styles.pageButton}>
+            <TouchableOpacity testID='end-page' onPress={() => handlePageChange(totalPages)} style={styles.pageButton}>
               <Text style={styles.pageButtonText}>{totalPages}</Text>
             </TouchableOpacity>
           </>
@@ -98,15 +96,7 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderRadius: 5,
     backgroundColor: '#fff',
-    transition: 'all 500ms ease-in-out', // Added transition for size change
-  },
-  errorButton: {
-    borderColor: 'red',
-    borderWidth: 1, // Border width should be the same as default
-    shadowColor: 'red',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 10,
+    transition: 'all 500ms ease-in-out',
   },
   pageButtonText: {
     fontSize: 16,

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import EpisodeDetail from '../components/EpisodeDetail/index';
+import EpisodeDetail from '../components/EpisodeDetail';
 import { getEpisodeDetails, getCharacterDetails } from '../services/EpisodeServices';
 import { useLoading } from '../contexts/LoadingContext';
 
@@ -10,31 +10,52 @@ const EpisodeDetailScreen = ({ route }) => {
   const [episode, setEpisode] = useState(null);
   const [characters, setCharacters] = useState([]);
 
-  useEffect(() => {
-    const fetchEpisodeDetails = async () => {
-      setLoader(true);
-      try {
-        const data = await getEpisodeDetails(episodeId);
-        // Obtener detalles de los personajes en paralelo
-        const characterPromises = data.characters.map((url) => getCharacterDetails(url));
-        const characterData = await Promise.all(characterPromises);
-        const timeoutId = setTimeout(() => {
-          setEpisode(data);
-          setCharacters(characterData);
-          setLoader(false);
-        }, 2000);
-        return () => clearTimeout(timeoutId);
-      } catch (error) {
-        console.error(error);
+  /**
+   * useCallback para memorizar la función fetchEpisodeDetails
+   * y evitar su recreación en cada render.
+   */
+  const fetchEpisodeDetails = useCallback(async () => {
+    setLoader(true);
+    try {
+      const data = await getEpisodeDetails(episodeId);
+      // Obtener detalles de los personajes en paralelo
+      const characterPromises = data.characters.map(getCharacterDetails);
+      const characterData = await Promise.all(characterPromises);
+      
+      // Mantiene el loader visible durante al menos 2000ms para mejorar la UX.
+      const timeoutId = setTimeout(() => {
+        setEpisode(data);
+        setCharacters(characterData);
         setLoader(false);
-      }
-    };
+      }, 2000);
+
+      // Cleanup para evitar problemas si el componente se desmonta antes de que el timeout termine.
+      return () => clearTimeout(timeoutId);
+    } catch (error) {
+      console.error('Error fetching episode details:', error);
+      setLoader(false);
+    }
+  }, [episodeId, setLoader]);
+
+  /**
+   * useEffect para ejecutar fetchEpisodeDetails cuando el componente
+   * se monta o cuando cambia el episodeId.
+   */
+  useEffect(() => {
     fetchEpisodeDetails();
-  }, [episodeId]);
+  }, [fetchEpisodeDetails]);
+
+  /**
+   * useMemo para memorizar el componente EpisodeDetail
+   * y evitar renders innecesarios.
+   */
+  const episodeDetailComponent = useMemo(() => (
+    <EpisodeDetail episode={episode} characters={characters} />
+  ), [episode, characters]);
 
   return (
     <ScrollView style={styles.container}>
-      <EpisodeDetail episode={episode} characters={characters} />
+      {episodeDetailComponent}
     </ScrollView>
   );
 };
@@ -42,11 +63,6 @@ const EpisodeDetailScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
-  },
-  loader: {
-    flex: 1,
-    justifyContent: 'center',
     backgroundColor: '#000',
   },
 });

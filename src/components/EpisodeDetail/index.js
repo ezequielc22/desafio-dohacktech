@@ -10,10 +10,11 @@ const EpisodeDetail = ({ episode, characters }) => {
     <View style={styles.container}>
       <View style={styles.content}>
         <TypewriterText 
-          text={`${episode?.episode || ''}: ${episode?.name || ''}`} 
+          testID='title'
+          text={`${episode?.episode}: ${episode?.name}`} 
           style={styles.title} 
         />
-        <TypewriterText text={`Air Date: ${episode?.air_date || ''}`} style={styles.text} />
+        <TypewriterText testID='subtitle' text={`Air Date: ${episode?.air_date}`} style={styles.text} />
       </View>
       <View style={styles.characterList}>
         {characters.map((character) => (

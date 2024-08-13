@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, TextInput, TouchableOpacity, Modal, Text, StyleSheet, Animated, TouchableWithoutFeedback } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import { getFilterOptions } from '../../services/CharacterService';
 
-const SearchBar = ({ searchQuery, onSearchChange, onFiltersChange }) => {
+const SearchBar = React.memo(({ searchQuery, onSearchChange, onFiltersChange }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [filters, setFilters] = useState({ species: '', status: '' });
   const [filterOptions, setFilterOptions] = useState({ species: [], status: [] });
@@ -13,29 +13,28 @@ const SearchBar = ({ searchQuery, onSearchChange, onFiltersChange }) => {
   const navigation = useNavigation();
 
   useEffect(() => {
+    const loadFilterOptions = async () => {
+      const options = await getFilterOptions();
+      setFilterOptions(options);
+    };
     loadFilterOptions();
   }, []);
 
-  const loadFilterOptions = async () => {
-    const options = await getFilterOptions();
-    setFilterOptions(options);
-  };
-  const navigateToFavorites = () => {
+  const navigateToFavorites = useCallback(() => {
     navigation.navigate('Favorites');
-  };
+  }, [navigation]);
 
-
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     onFiltersChange({ ...filters });
     toggleModal();
-  };
+  }, [filters, onFiltersChange]);
 
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     setFilters({ species: '', status: '' });
     onFiltersChange({ species: '', status: '' });
-  };
+  }, [onFiltersChange]);
 
-  const toggleModal = () => {
+  const toggleModal = useCallback(() => {
     if (modalVisible) {
       Animated.timing(opacity, {
         toValue: 0,
@@ -50,21 +49,20 @@ const SearchBar = ({ searchQuery, onSearchChange, onFiltersChange }) => {
         useNativeDriver: true,
       }).start();
     }
-  };
+  }, [modalVisible, opacity]);
 
   const getPillStyle = (filterType) => {
     return filters[filterType] ? styles.activePill : styles.inactivePill;
   };
 
   const handleBackdropPress = () => {
-    if (modalVisible) {
       toggleModal();
-    }
   };
 
   return (
     <View style={styles.searchContainer}>
       <TextInput
+        testID='search'
         style={styles.searchInput}
         placeholder="Search by name..."
         value={searchQuery}
@@ -72,23 +70,24 @@ const SearchBar = ({ searchQuery, onSearchChange, onFiltersChange }) => {
         autoCorrect={false}
         autoCapitalize="none"
       />
-      <TouchableOpacity onPress={toggleModal} style={styles.filterButton}>
+      <TouchableOpacity testID='filter-icon' onPress={toggleModal} style={styles.filterButton}>
         <Icon name="filter-alt" size={24} color="#F0F2EB" />
       </TouchableOpacity>
-      <TouchableOpacity onPress={navigateToFavorites} style={styles.favoritesButton}>
+      <TouchableOpacity testID='fav-icon' onPress={navigateToFavorites} style={styles.favoritesButton}>
         <Icon name="star" size={24} color="#F0F2EB" />
       </TouchableOpacity>
-      <Modal visible={modalVisible} transparent={true} animationType="fade">
-        <TouchableWithoutFeedback onPress={handleBackdropPress}>
-          <Animated.View style={[styles.modalContainer, { opacity }]}>
+      <Modal testID='filters-modal' visible={modalVisible} transparent={true} animationType="fade">
+        <TouchableWithoutFeedback testID='prev-button' onPress={handleBackdropPress}>
+          <Animated.View testID='filters-card' style={[styles.modalContainer, { opacity }]}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Filter by:</Text>
+              <Text testID='filters-title' style={styles.modalTitle}>Filter by:</Text>
               <View style={styles.pillContainer}>
-                <Text style={[styles.pillText, getPillStyle('species')]}>Species: {filters.species || 'All'}</Text>
-                <Text style={[styles.pillText, getPillStyle('status')]}>Status: {filters.status || 'All'}</Text>
+                <Text testID='species-pill' style={[styles.pillText, getPillStyle('species')]}>Species: {filters.species || 'All'}</Text>
+                <Text testID='status-pill' style={[styles.pillText, getPillStyle('status')]}>Status: {filters.status || 'All'}</Text>
               </View>
               <Text>Species</Text>
               <Picker
+                testID='species-picker'
                 selectedValue={filters.species}
                 onValueChange={(itemValue) => setFilters({ ...filters, species: itemValue })}
               >
@@ -99,6 +98,7 @@ const SearchBar = ({ searchQuery, onSearchChange, onFiltersChange }) => {
               </Picker>
               <Text>Status</Text>
               <Picker
+                testID='status-picker'
                 selectedValue={filters.status}
                 onValueChange={(itemValue) => setFilters({ ...filters, status: itemValue })}
               >
@@ -108,10 +108,10 @@ const SearchBar = ({ searchQuery, onSearchChange, onFiltersChange }) => {
                 ))}
               </Picker>
               <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={clearFilters} style={styles.clearButton}>
+                <TouchableOpacity testID='clear-filters' onPress={clearFilters} style={styles.clearButton}>
                   <Text style={styles.clearButtonText}>Clear Filters</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={applyFilters} style={styles.applyButton}>
+                <TouchableOpacity testID='apply-filters' onPress={applyFilters} style={styles.applyButton}>
                   <Text style={styles.buttonText}>Apply Filters</Text>
                 </TouchableOpacity>
               </View>
@@ -121,16 +121,16 @@ const SearchBar = ({ searchQuery, onSearchChange, onFiltersChange }) => {
       </Modal>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
-    backgroundColor: '#F0F2EB', // Portal color
+    backgroundColor: '#F0F2EB',
     borderBottomWidth: 1,
-    borderBottomColor: '#A7CB54', // Portal color
+    borderBottomColor: '#A7CB54',
   },
   searchInput: {
     flex: 1,
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   },
   filterButton: {
     padding: 10,
-    backgroundColor: '#208D45', // Portal color
+    backgroundColor: '#208D45',
     borderRadius: 5,
   },
   modalContainer: {
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#208D45', // Portal color
+    color: '#208D45',
   },
   pillContainer: {
     flexDirection: 'row',
@@ -174,34 +174,30 @@ const styles = StyleSheet.create({
     marginRight: 10,
     padding: 5,
     borderRadius: 15,
-    backgroundColor: '#5CAD4A', // Portal color
+    backgroundColor: '#5CAD4A',
     color: '#FFFFFF',
     fontWeight: 'bold',
   },
   activePill: {
-    backgroundColor: '#5CAD4A', // Portal color
+    backgroundColor: '#5CAD4A',
   },
   inactivePill: {
-    backgroundColor: '#A7CB54', // Portal color
+    backgroundColor: '#A7CB54',
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   clearButton: {
-    borderColor: '#F0F2EB', // Portal color
-    borderWidth: 1,
     padding: 10,
-    borderRadius: 5,
     marginRight: 10,
-    backgroundColor: 'transparent',
   },
   clearButtonText: {
-    color: '#F0F2EB', // Portal color
+    color: '#5CAD4A', 
     fontWeight: 'bold',
   },
   applyButton: {
-    backgroundColor: '#5CAD4A', // Portal color
+    backgroundColor: '#5CAD4A',
     padding: 10,
     borderRadius: 5,
   },
@@ -211,7 +207,7 @@ const styles = StyleSheet.create({
   },
   favoritesButton: {
     padding: 10,
-    backgroundColor: '#A7CB54', // Ajusta el color a tu tema
+    backgroundColor: '#A7CB54',
     borderRadius: 5,
     marginLeft: 10,
   },

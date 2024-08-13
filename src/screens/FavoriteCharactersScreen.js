@@ -1,43 +1,59 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
-import CharacterList from '../components/CharacterList/index';
-import EmptyState from '../components/EmptyCard/index';
+import CharacterList from '../components/CharacterList';
+import EmptyState from '../components/EmptyCard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getFavoriteCharacters } from '../services/FavoritesService';
 
 const FavoriteCharactersScreen = () => {
   const [favoriteCharacters, setFavoriteCharacters] = useState([]);
 
-  useEffect(() => {
-    const loadFavorites = async () => {
-      try {
-        const favoritesJSON = await AsyncStorage.getItem('favorites');
-        const favoritesSet = favoritesJSON ? new Set(JSON.parse(favoritesJSON)) : new Set();
-        
-        if (favoritesSet.size > 0) {
-          const fetchedFavorites = await getFavoriteCharacters(favoritesSet);
-          setFavoriteCharacters(fetchedFavorites);
-        } else {
-          setFavoriteCharacters([]);
-        }
-      } catch (error) {
-        console.error('Error loading favorites', error);
+  /**
+   * useCallback para memorizar la función loadFavorites
+   * y evitar su recreación en cada render.
+   */
+  const loadFavorites = useCallback(async () => {
+    try {
+      const favoritesJSON = await AsyncStorage.getItem('favorites');
+      const favoritesSet = favoritesJSON ? new Set(JSON.parse(favoritesJSON)) : new Set();
+      
+      if (favoritesSet.size > 0) {
+        const fetchedFavorites = await getFavoriteCharacters(favoritesSet);
+        setFavoriteCharacters(fetchedFavorites);
+      } else {
+        setFavoriteCharacters([]);
       }
-    };
-
-    loadFavorites();
+    } catch (error) {
+      console.error('Error loading favorites:', error);
+    }
   }, []);
+
+  /**
+   * useEffect para ejecutar loadFavorites cuando el componente
+   * se monta, asegurando que los datos se carguen al inicio.
+   */
+  useEffect(() => {
+    loadFavorites();
+  }, [loadFavorites]);
+
+  /**
+   * useMemo para memorizar el contenido de la pantalla basado en si hay favoritos,
+   * evitando renders innecesarios.
+   */
+  const content = useMemo(() => {
+    return favoriteCharacters.length > 0 ? (
+      <CharacterList characters={favoriteCharacters} />
+    ) : (
+      <EmptyState 
+        message="Ups, parece que aún no tienes favoritos" 
+        iconName="sentiment-dissatisfied"
+      />
+    );
+  }, [favoriteCharacters]);
 
   return (
     <View style={styles.container}>
-      {favoriteCharacters.length > 0 ? (
-        <CharacterList characters={favoriteCharacters} />
-      ) : (
-        <EmptyState 
-          message="Ups, parece que aún no tienes favoritos" 
-          iconName="sentiment-dissatisfied"
-        />
-      )}
+      {content}
     </View>
   );
 };

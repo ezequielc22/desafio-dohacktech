@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Animated } from 'react-native';
 
-const TypewriterText = ({ text, duration = 100, style }) => {
+const TypewriterText = ({ testID, text, duration = 100, style }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [textAnim] = useState(new Animated.Value(0));
 
@@ -29,7 +29,7 @@ const TypewriterText = ({ text, duration = 100, style }) => {
   }, [textAnim, text.length, duration]);
 
   return (
-    <Animated.Text style={[style, { opacity: textAnim }]}>
+    <Animated.Text testID={testID} style={[style, { opacity: textAnim }]}>
       {displayedText}
     </Animated.Text>
   );

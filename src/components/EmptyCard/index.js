@@ -5,7 +5,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 const EmptyState = ({ message, iconName, iconSize = 100, iconColor = '#555' }) => {
   return (
     <View style={styles.container}>
-      <MaterialIcons name={iconName} size={iconSize} color={iconColor} />
+      <MaterialIcons testID='icon' name={iconName} size={iconSize} color={iconColor} />
       <Text style={styles.text}>{message}</Text>
     </View>
   );

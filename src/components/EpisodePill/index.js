@@ -4,10 +4,10 @@ import { useNavigation } from '@react-navigation/native';
 
 const EpisodePill = memo(({ item }) => {
     const navigation = useNavigation();
-  // Function to extract episode number from URL
-  const handleEpisodePress = (episodeId) => {
+
+    const handleEpisodePress = (episodeId) => {
     navigation.navigate('EpisodeDetail', { episodeId });
-  };
+    };
   return (
     <TouchableOpacity style={styles.episodePill} onPress={() => handleEpisodePress(item)}>
       <Text style={styles.episodeText}>{item}</Text>
