@@ -11,3 +11,5 @@ Corre la aplicacion en modo desarrollador.
 La aplicacion esta desarrollada en expo, por lo que al correr el comando se te dispone un codigo QR para poder abrirla desde la aplicacion expo en tu celular.
 Otra forma de visualizar la aplicacion es mediante el uso de Android Studio, generando un aplicativo de Android y creando un emulador, el comando reconoce automaticamente el emulador.
 Si hay algun error se mostrara en consola.
+
+Tambien puedes descargar la aplicacion en su version apk desde este enlace de expo! (https://expo.dev/accounts/ecespedes/projects/desafio-dohacktech/builds/eb5dbeb6-7b99-4a01-9f9a-4643d40e28d0)
